@@ -13,6 +13,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
+      - name: Python einrichten
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
       - name: Programm holen
         run: python3 epg_israel.py playlist.m3u8 epg_israel.json
       - name: Speichern
