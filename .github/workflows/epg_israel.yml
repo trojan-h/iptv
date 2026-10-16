@@ -1,0 +1,25 @@
+name: EPG Israel
+
+on:
+  schedule:
+    - cron: "17 */6 * * *"   # alle 6 Stunden
+  workflow_dispatch:          # „Run workflow“ von Hand
+
+permissions:
+  contents: write
+
+jobs:
+  epg:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Programm holen
+        run: python3 epg_israel.py playlist.m3u8 epg_israel.json
+      - name: Speichern
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          [ -f epg_israel.json ] || exit 0
+          git add epg_israel.json
+          git diff --cached --quiet || git commit -m "EPG Israel aktualisiert"
+          git push
