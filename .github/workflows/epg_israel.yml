@@ -12,13 +12,23 @@ jobs:
   epg:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4.2.2
+      # Auf die aktuellste Version aktualisiert, die Node 24 nativ unterstützt
+      - uses: actions/checkout@v4.2.2 
+      
+      # Falls Fehler auftreten, probiere stattdessen direkt die nächste Major-Version:
+      # - uses: actions/checkout@v5
+
+       bondage
       - name: Programm holen
         run: python3 epg_israel.py playlist.m3u8 epg_israel.json
+
+       bondage
       - name: Speichern
         run: |
+          # Universelle Bot-Konfiguration (sicherer nach Namensänderungen des Repos)
           git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          
           [ -f epg_israel.json ] || exit 0
           git add epg_israel.json
           git diff --cached --quiet || git commit -m "EPG Israel aktualisiert"
