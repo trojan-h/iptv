@@ -44,15 +44,23 @@ img { display: block; }
 }
 .marke::after { content: ""; position: absolute; right: 6px; top: 6px; width: 7px; height: 7px; border-radius: 50%; background: var(--rot); }
 .leiste-oben h1 { font-size: 20px; font-weight: 700; margin: 0; letter-spacing: .2px; }
+.reiter {
+  margin-inline-start: auto; width: 42px; height: 42px; border-radius: 50%; border: 0; cursor: pointer;
+  background: var(--flaeche-hoch); font-size: 19px; display: grid; place-items: center;
+  transition: background .18s ease, transform .18s ease;
+}
+.reiter:hover, .reiter:focus-visible { background: #f5f5f7; outline: none; transform: scale(1.06); }
+/* Leiste und Kopf bleiben oben stehen, die Reihen scrollen darunter durch */
+.oben-fix { position: sticky; top: 0; z-index: 5; background: var(--grund); box-shadow: 0 14px 22px -16px rgba(0, 0, 0, .95); }
 .leiste-oben .land { color: var(--text-leise); font-weight: 600; }
 
 /* Kopf: der angewaehlte Sender, gross */
 .kopf {
   display: flex; align-items: center; gap: clamp(18px, 3.5vw, 56px); flex-wrap: wrap;
-  padding: clamp(18px, 3vw, 40px) var(--rand) clamp(8px, 2vw, 24px);
+  padding: clamp(10px, 2vw, 28px) var(--rand) clamp(12px, 1.6vw, 22px);
 }
 .kopf .logo-gross {
-  width: clamp(150px, 26vw, 384px); aspect-ratio: 16 / 9; border-radius: clamp(16px, 2vw, 28px);
+  width: clamp(120px, 22vw, 340px); aspect-ratio: 16 / 9; border-radius: clamp(14px, 2vw, 26px);
   background: var(--flaeche); display: grid; place-items: center; overflow: hidden; flex: none;
 }
 .kopf .logo-gross img { width: 62%; height: 62%; }
@@ -211,6 +219,72 @@ img { display: block; }
 .eintrag .b { grid-column: 2; font-size: 14px; color: inherit; opacity: .75; display: none; line-height: 1.45; }
 .eintrag.auf .b { display: block; }
 
+/* Programmfuehrer: Raster aller Sender, Zeit von links nach rechts - wie in
+   der App laufen Zeitachsen auch auf Hebraeisch nicht gespiegelt */
+.fuehrer { position: fixed; inset: 0; z-index: 25; background: var(--grund); display: none; flex-direction: column; }
+.fuehrer.offen { display: flex; }
+.fuehrer-kopf {
+  display: flex; align-items: center; gap: 18px; flex: none;
+  padding: calc(env(safe-area-inset-top) + 16px) var(--rand) 12px;
+}
+.fuehrer-kopf .text { min-width: 0; flex: 1; }
+.fuehrer-kopf h2 { margin: 0 0 4px; font-size: 15px; font-weight: 600; color: var(--text-leise); }
+.auswahl .t { font-size: clamp(20px, 2.6vw, 32px); font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: start; }
+.auswahl .m { color: var(--text-leise); font-size: clamp(13px, 1.3vw, 16px); margin-top: 2px; }
+.raster-rahmen { flex: 1; overflow: auto; overscroll-behavior: contain; padding-bottom: env(safe-area-inset-bottom); }
+.raster { position: relative; --spalte: 210px; --zeile: 66px; --zeitkopf: 42px; }
+.zeitleiste { position: sticky; top: 0; z-index: 3; display: flex; height: var(--zeitkopf); background: var(--grund); }
+.ecke { position: sticky; left: 0; z-index: 4; width: var(--spalte); flex: none; background: var(--grund); }
+.zeiten { position: relative; flex: none; height: 100%; }
+.zmarke {
+  position: absolute; top: 0; bottom: 0; padding: 12px 0 0 7px; border-left: 1px solid rgba(255, 255, 255, .16);
+  font-size: 13px; color: var(--text-leise); white-space: nowrap; font-variant-numeric: tabular-nums;
+}
+.zmarke.halb { border-left-color: rgba(255, 255, 255, .07); color: var(--text-blass); }
+.zmarke b { color: var(--text); font-weight: 700; margin-right: 6px; }
+.rzeile { display: flex; height: var(--zeile); border-top: 1px solid rgba(255, 255, 255, .06); }
+.kanal {
+  position: sticky; left: 0; z-index: 2; width: var(--spalte); flex: none; display: flex; align-items: center; gap: 12px;
+  padding: 0 12px 0 var(--rand); border: 0; background: var(--grund); color: inherit; cursor: pointer; text-align: start;
+}
+.kanal .kl { position: relative; width: 64px; height: 36px; flex: none; border-radius: 8px; background: var(--flaeche); }
+.kanal .kl img { position: absolute; inset: 0; margin: auto; width: 78%; height: 78%; object-fit: contain; }
+.kanal .kl.hell { background: #e9e9ec; }
+.kanal .kn { font-size: 14px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.kanal:hover .kl, .kanal:focus-visible .kl { outline: 2px solid #f5f5f7; outline-offset: 2px; }
+.kanal:focus-visible { outline: none; }
+.spur { position: relative; flex: none; height: 100%; }
+.zelle {
+  position: absolute; top: 5px; bottom: 5px; border: 0; border-radius: 10px; background: var(--flaeche); color: var(--text);
+  padding: 0 10px; overflow: hidden; cursor: pointer; display: flex; flex-direction: column; justify-content: center; gap: 2px;
+  transition: background .12s ease; scroll-margin-left: calc(var(--spalte) + 12px); scroll-margin-top: calc(var(--zeitkopf) + 8px);
+}
+.zelle .t { font-size: 14px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: start; }
+.zelle .u { font-size: 12px; color: var(--text-leise); white-space: nowrap; font-variant-numeric: tabular-nums; }
+.zelle.laeuft { background: var(--flaeche-hoch); }
+.zelle.vorbei { opacity: .45; }
+.zelle:hover { background: #3a3a3c; }
+.zelle:focus-visible, .zelle.gewaehlt { background: #f5f5f7; color: #111; outline: none; opacity: 1; }
+.zelle:focus-visible .u, .zelle.gewaehlt .u { color: rgba(0, 0, 0, .6); }
+.ohne { position: sticky; left: calc(var(--spalte) + 14px); display: inline-block; line-height: var(--zeile); color: var(--text-blass); font-size: 13px; }
+.jetzt-linie { position: absolute; top: var(--zeitkopf); bottom: 0; width: 2px; margin-left: -1px; background: var(--rot); z-index: 1; pointer-events: none; }
+.jetzt-linie::before { content: ""; position: absolute; top: -5px; left: -4px; width: 10px; height: 10px; border-radius: 50%; background: var(--rot); }
+
+/* Sendung im Fuehrer angeklickt */
+.detail { position: fixed; inset: 0; z-index: 35; display: none; background: rgba(0, 0, 0, .55); }
+.detail.offen { display: grid; place-items: center; padding: calc(env(safe-area-inset-top) + 16px) 16px calc(env(safe-area-inset-bottom) + 16px); }
+.detail .blatt { width: min(620px, 100%); padding: 22px 24px 20px; gap: 10px; }
+.detail .oben { color: var(--text-leise); font-size: 14px; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.detail h3 { margin: 0; font-size: clamp(22px, 3vw, 30px); line-height: 1.2; text-align: start; }
+.detail p { margin: 0; color: var(--text-leise); line-height: 1.5; font-size: 16px; overflow-y: auto; max-height: 40vh; text-align: start; }
+.detail .knoepfe { display: flex; gap: 12px; margin-top: 8px; flex-wrap: wrap; }
+
+@media (max-width: 600px) {
+  .raster { --spalte: 92px; --zeile: 60px; }
+  .kanal { padding: 0 8px 0 16px; }
+  .kanal .kn { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+}
+
 .hinweis {
   position: fixed; left: 50%; bottom: calc(env(safe-area-inset-bottom) + 24px); transform: translate(-50%, 20px);
   padding: 14px 22px; border-radius: 18px; max-width: min(560px, 90vw); font-size: 15px; line-height: 1.4;
@@ -221,15 +295,30 @@ img { display: block; }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation-duration: 3s !important; } }
 @media (prefers-reduced-transparency: reduce) { .glas { -webkit-backdrop-filter: none; backdrop-filter: none; background: #2c2c2e; } }
 @media (max-width: 600px) {
-  .kopf .knoepfe .knopf { padding: 10px 18px; }
+  /* Fester Kopf auf dem Handy kompakt: Logo klein neben dem Text */
+  .leiste-oben { padding-top: calc(env(safe-area-inset-top) + 10px); }
+  .kopf { flex-wrap: nowrap; align-items: flex-start; gap: 14px; padding-top: 8px; padding-bottom: 12px; }
+  .kopf .logo-gross { width: 96px; border-radius: 12px; }
+  .kopf .text { flex: 1 1 auto; }
+  .kopf .name { font-size: 24px; margin-bottom: 2px; }
+  .kopf .unterzeile { font-size: 13px; }
+  .kopf .sendung { margin-top: 6px; }
+  .kopf .sendung .titel { font-size: 15px; }
+  .kopf .sendung .zeit { font-size: 12px; margin-top: 2px; }
+  .kopf .sendung .danach { display: none; }
+  .kopf .fortschritt { margin-top: 6px; }
+  .kopf .knoepfe { margin-top: 10px; gap: 8px; }
+  .kopf .knoepfe .knopf { padding: 8px 14px; font-size: 14px; }
   .einblendung .rechts .nur-gross { display: none; }
 }
 </style>
 </head>
 <body>
+<div class="oben-fix" id="obenFix">
 <header class="leiste-oben">
   <div class="marke" aria-hidden="true">tv</div>
   <h1>Zapper <span class="land">· ישראל</span></h1>
+  <button class="reiter" id="kopfFuehrer" title="לוח שידורים (G)" aria-label="לוח שידורים">🗓</button>
 </header>
 
 <section class="kopf" id="kopf" aria-live="polite">
@@ -241,10 +330,11 @@ img { display: block; }
     <div class="knoepfe">
       <button class="knopf haupt" id="kopfAnsehen">▶ צפייה</button>
       <button class="knopf" id="kopfFavorit">☆ מועדף</button>
-      <button class="knopf" id="kopfProgramm">לוח שידורים</button>
     </div>
   </div>
 </section>
+
+</div>
 
 <main class="reihen" id="reihen"></main>
 
@@ -282,6 +372,31 @@ img { display: block; }
       <button class="rund" id="programmZu" aria-label="סגירה">✕</button>
     </div>
     <div class="blatt-liste" id="programmListe"></div>
+  </div>
+</div>
+
+<div class="fuehrer" id="fuehrer" aria-hidden="true">
+  <div class="fuehrer-kopf">
+    <button class="rund glas" id="fuehrerZu" title="סגירה (Esc)" aria-label="סגירה">✕</button>
+    <div class="text">
+      <h2>לוח שידורים</h2>
+      <div class="auswahl" id="fuehrerAuswahl" aria-live="polite"></div>
+    </div>
+  </div>
+  <div class="raster-rahmen" id="rasterRahmen" dir="ltr">
+    <div class="raster" id="raster"></div>
+  </div>
+</div>
+
+<div class="detail" id="detail" aria-hidden="true">
+  <div class="blatt glas" role="dialog" aria-labelledby="detailTitel">
+    <div class="oben" id="detailOben"></div>
+    <h3 id="detailTitel" dir="auto"></h3>
+    <p id="detailText" dir="auto"></p>
+    <div class="knoepfe">
+      <button class="knopf haupt" id="detailAnsehen">▶ צפייה</button>
+      <button class="knopf" id="detailZu">סגירה</button>
+    </div>
   </div>
 </div>
 
@@ -335,7 +450,6 @@ const speicher = {
 
 let sender = [];
 let favoriten = speicher.lies("zi_favoriten", []);
-let zuletzt = speicher.lies("zi_zuletzt", []);
 let gewaehlt = null;
 
 // --- Liste lesen -----------------------------------------------------------
@@ -376,8 +490,8 @@ async function laden() {
   return { liste: EINGEBAUT, quelle: null };
 }
 
-// `key` bleibt die Adresse aus der Liste - daran haengen Favoriten und
-// „Zuletzt gesehen“, auch wenn sich die Ersatz-Adresse aendert
+// `key` bleibt die Adresse aus der Liste - daran haengen die Favoriten,
+// auch wenn sich die Ersatz-Adresse aendert
 // Unverschluesselte Sender (http) blockiert jeder Browser in dieser https-
 // Seite. Direkt geoeffnet spielt sie aber der Player des Browsers (Safari
 // selbst, Chrome ueber eine HLS-Erweiterung) - also in einem neuen Tab, in
@@ -392,8 +506,6 @@ function vorbereiten(liste) {
 
 function externOeffnen(c) {
   window.open(c.url, "_blank");
-  zuletzt = [c.key, ...zuletzt.filter((u) => u !== c.key)].slice(0, 12);
-  speicher.schreib("zi_zuletzt", zuletzt);
 }
 
 // --- Programm (EPG) -------------------------------------------------------
@@ -473,7 +585,6 @@ const programmOffen = () => $("programm").classList.contains("offen");
 $("programmListe").addEventListener("click", (e) => { const x = e.target.closest(".eintrag"); if (x) x.classList.toggle("auf"); });
 $("programmZu").addEventListener("click", programmZu);
 $("programm").addEventListener("click", (e) => { if (e.target === $("programm")) programmZu(); });
-$("kopfProgramm").addEventListener("click", () => gewaehlt && programmZeigen(gewaehlt));
 $("osdProgramm").addEventListener("click", (e) => { e.stopPropagation(); if (aktuell) programmZeigen(aktuell); });
 // Vorrang fuer die Uebersicht: Esc schliesst sie, Pfeile bleiben in ihr
 document.addEventListener("keydown", (e) => {
@@ -487,6 +598,184 @@ document.addEventListener("keydown", (e) => {
   e.stopImmediatePropagation();
 }, true);
 
+// --- Programmfuehrer (Raster) ------------------------------------------------
+// Alle Sender untereinander, die Zeit laeuft nach rechts (auch auf
+// Hebraeisch, wie in der App). Beginnt eine halbe Stunde vor jetzt und reicht
+// so weit, wie das Programm geht. ◀▶ springt von Sendung zu Sendung, ▲▼
+// bleibt bei derselben Uhrzeit, Klick zeigt die Sendung mit „צפייה“.
+const FUEHRER_VORLAUF = 30 * 60;
+let fuehrer = null;   // { t0, px, spalte, zeilen: [[sendung, …] je Sender] }
+let refZeit = 0;      // Uhrzeit, an der ▲▼ festhaelt
+const fuehrerOffen = () => $("fuehrer").classList.contains("offen");
+const detailOffen = () => $("detail").classList.contains("offen");
+
+function fuehrerZeigen(start) {
+  const jetzt = jetztSek();
+  const t0 = Math.floor((jetzt - FUEHRER_VORLAUF) / 1800) * 1800;
+  let t1 = t0 + 6 * 3600;
+  for (const c of sender) for (const p of sendungen(c)) if (p[1] > t1) t1 = p[1];
+  t1 = Math.min(t1, t0 + 48 * 3600);
+  const schmal = innerWidth < 600;
+  const px = (schmal ? 180 : 300) / 3600, spalte = schmal ? 92 : 210;
+  const breite = Math.ceil((t1 - t0) * px);
+
+  // Zeitleiste: halbe Stunden, beim Tageswechsel der Tag davor
+  let marken = "", tagVorher = fmtDatum.format(new Date(t0 * 1000));
+  for (let t = t0; t < t1; t += 1800) {
+    const tag = fmtDatum.format(new Date(t * 1000));
+    const neu = tag !== tagVorher; tagVorher = tag;
+    marken += `<span class="zmarke${t % 3600 ? " halb" : ""}" style="left:${Math.round((t - t0) * px)}px">${neu ? `<b>${esc(tagName(t))}</b>` : ""}${uhr(t)}</span>`;
+  }
+
+  const zeilen = sender.map((c) => sendungen(c).filter((p) => p[1] > t0 && p[0] < t1));
+  const html = sender.map((c, k) => {
+    const zellen = zeilen[k].length ? zeilen[k].map((p, j) => {
+      const a = Math.max(p[0], t0);
+      const links = Math.round((a - t0) * px) + 2;
+      const w = Math.max(4, Math.round((Math.min(p[1], t1) - a) * px) - 4);
+      const art = p[1] <= jetzt ? " vorbei" : p[0] <= jetzt ? " laeuft" : "";
+      return `<button class="zelle${art}" data-k="${k}" data-p="${j}" style="left:${links}px;width:${w}px"
+        aria-label="${esc(p[2])}, ${uhr(p[0])}"><span class="t" dir="auto">${esc(p[2])}</span><span class="u">${uhr(p[0])}–${uhr(p[1])}</span></button>`;
+    }).join("") : `<span class="ohne">אין מידע על התוכניות</span>`;
+    return `<div class="rzeile">
+      <button class="kanal" data-k="${k}" title="${esc(c.name)}">
+        <span class="kl" data-logo="${esc(c.logo)}">${c.logo ? `<img src="${esc(c.logo)}" alt="" referrerpolicy="no-referrer">` : ""}</span>
+        <span class="kn" dir="auto">${esc(c.name)}</span>
+      </button>
+      <div class="spur" style="width:${breite}px">${zellen}</div>
+    </div>`;
+  }).join("");
+
+  const raster = $("raster");
+  raster.style.setProperty("--spalte", spalte + "px");
+  raster.style.width = spalte + breite + "px";
+  raster.innerHTML = `<div class="zeitleiste"><div class="ecke"></div><div class="zeiten" style="width:${breite}px">${marken}</div></div>
+    ${html}<div class="jetzt-linie" id="jetztLinie"></div>`;
+  fuehrer = { t0, px, spalte, zeilen };
+  jetztLinieSetzen();
+  logosEinfaerben(raster);
+
+  $("fuehrer").classList.add("offen"); $("fuehrer").setAttribute("aria-hidden", "false");
+  document.body.style.overflow = "hidden";
+  // An die Jetzt-Linie und in die Zeile des gewaehlten Senders
+  const rahmen = $("rasterRahmen");
+  rahmen.scrollLeft = Math.max(0, (jetzt - t0) * px - 80);
+  const k = Math.max(0, sender.indexOf(start));
+  const zeile = raster.querySelectorAll(".rzeile")[k];
+  if (zeile) rahmen.scrollTop = Math.max(0, zeile.offsetTop - rahmen.clientHeight / 3);
+  refZeit = jetzt;
+  const ziel = zelleBei(k, refZeit) || raster.querySelector(".zelle");
+  if (ziel) ziel.focus({ preventScroll: true });
+  auswahlZeigen(ziel);
+}
+
+function jetztLinieSetzen() {
+  if (!fuehrer) return;
+  $("jetztLinie").style.left = fuehrer.spalte + (jetztSek() - fuehrer.t0) * fuehrer.px + "px";
+}
+
+function fuehrerZu() {
+  $("fuehrer").classList.remove("offen"); $("fuehrer").setAttribute("aria-hidden", "true");
+  document.body.style.overflow = "";
+  $("raster").innerHTML = ""; fuehrer = null; auswahlZeigen(null);
+  $("kopfFuehrer").focus({ preventScroll: true });
+}
+
+// Die Sendung eines Senders, die zur Uhrzeit t laeuft (sonst die naechste)
+function zelleBei(k, t) {
+  const liste = fuehrer && fuehrer.zeilen[k];
+  if (!liste || !liste.length) return null;
+  let j = liste.findIndex((p) => p[0] <= t && t < p[1]);
+  if (j < 0) j = liste.findIndex((p) => p[0] > t);
+  if (j < 0) j = liste.length - 1;
+  return $("raster").querySelector(`.zelle[data-k="${k}"][data-p="${j}"]`);
+}
+
+function auswahlZeigen(z) {
+  $("raster").querySelectorAll(".zelle.gewaehlt").forEach((x) => x.classList.remove("gewaehlt"));
+  if (!z) { $("fuehrerAuswahl").innerHTML = ""; return; }
+  z.classList.add("gewaehlt");
+  const c = sender[+z.dataset.k], p = fuehrer.zeilen[+z.dataset.k][+z.dataset.p];
+  $("fuehrerAuswahl").innerHTML = `<div class="t" dir="auto">${esc(p[2])}</div>
+    <div class="m"><span dir="auto">${esc(c.name)}</span> · ${tagName(p[0])} · ${spanne(p[0], p[1])}</div>`;
+}
+
+$("raster").addEventListener("focusin", (e) => { const z = e.target.closest(".zelle"); if (z) auswahlZeigen(z); });
+$("raster").addEventListener("click", (e) => {
+  const z = e.target.closest(".zelle");
+  if (z) { z.focus({ preventScroll: true }); detailZeigen(+z.dataset.k, +z.dataset.p); return; }
+  const kanal = e.target.closest(".kanal");
+  if (kanal) senderStarten(sender[+kanal.dataset.k]);
+});
+$("fuehrerZu").addEventListener("click", fuehrerZu);
+$("kopfFuehrer").addEventListener("click", () => fuehrerZeigen(gewaehlt));
+
+// Pfeile im Raster: Vorrang vor der Uebersicht dahinter
+document.addEventListener("keydown", (e) => {
+  if (!fuehrerOffen() || detailOffen() || programmOffen()) return;
+  const z = document.activeElement && document.activeElement.closest(".zelle");
+  if (e.key === "Escape" || e.key === "Backspace") { e.preventDefault(); fuehrerZu(); }
+  else if (z && (e.key === "ArrowLeft" || e.key === "ArrowRight")) {
+    e.preventDefault();
+    const k = +z.dataset.k, j = +z.dataset.p + (e.key === "ArrowRight" ? 1 : -1);
+    const n = $("raster").querySelector(`.zelle[data-k="${k}"][data-p="${j}"]`);
+    if (n) { refZeit = Math.max(fuehrer.zeilen[k][j][0], jetztSek()); n.focus(); auswahlZeigen(n); n.scrollIntoView({ block: "nearest", inline: "nearest" }); }
+  } else if (z && (e.key === "ArrowUp" || e.key === "ArrowDown")) {
+    e.preventDefault();
+    const schritt = e.key === "ArrowDown" ? 1 : -1;
+    for (let k = +z.dataset.k + schritt; k >= 0 && k < sender.length; k += schritt) {
+      const n = zelleBei(k, refZeit);
+      if (n) { n.focus(); auswahlZeigen(n); n.scrollIntoView({ block: "nearest", inline: "nearest" }); break; }
+    }
+  } else if (!z && e.key.startsWith("Arrow")) {
+    const n = zelleBei(0, refZeit || jetztSek()); if (n) { e.preventDefault(); n.focus(); }
+  } else {
+    return;
+  }
+  e.stopImmediatePropagation();
+}, true);
+
+// --- Sendung im Detail -------------------------------------------------------
+let detailSender = null, detailZurueck = null;
+function detailZeigen(k, j) {
+  const c = sender[k], p = fuehrer.zeilen[k][j];
+  detailSender = c; detailZurueck = document.activeElement;
+  const laeuft = p[0] <= jetztSek() && jetztSek() < p[1];
+  $("detailOben").innerHTML = `<span dir="auto">${esc(c.name)}</span> · ${tagName(p[0])} · ${spanne(p[0], p[1])}${laeuft ? ` · <span class="punkt-live">שידור חי</span>` : ""}`;
+  $("detailTitel").textContent = p[2];
+  $("detailText").textContent = p[3] || "";
+  $("detailText").style.display = p[3] ? "" : "none";
+  $("detail").classList.add("offen"); $("detail").setAttribute("aria-hidden", "false");
+  $("detailAnsehen").focus({ preventScroll: true });
+}
+function detailZu() {
+  $("detail").classList.remove("offen"); $("detail").setAttribute("aria-hidden", "true");
+  if (detailZurueck) detailZurueck.focus({ preventScroll: true });
+}
+$("detailZu").addEventListener("click", detailZu);
+$("detail").addEventListener("click", (e) => { if (e.target === $("detail")) detailZu(); });
+$("detailAnsehen").addEventListener("click", () => { const c = detailSender; detailZu(); senderStarten(c); });
+document.addEventListener("keydown", (e) => {
+  if (!detailOffen()) return;
+  if (e.key === "Escape" || e.key === "Backspace") { e.preventDefault(); detailZu(); }
+  e.stopImmediatePropagation();
+}, true);
+
+// Aus dem Fuehrer einen Sender starten: Fuehrer zu, dann wie in der Uebersicht
+function senderStarten(c) {
+  if (!c) return;
+  if (fuehrerOffen()) fuehrerZu();
+  kopfZeigen(c);
+  if (c.extern) externOeffnen(c);
+  else abspielen(c, { titel: "כל הערוצים", sender });
+}
+
+// Taste G in der Uebersicht oeffnet den Fuehrer (im Player: Programm des Senders)
+document.addEventListener("keydown", (e) => {
+  if ((e.key === "g" || e.key === "G") && !fuehrerOffen() && !detailOffen() && !programmOffen() &&
+      !$("spieler").classList.contains("offen")) fuehrerZeigen(gewaehlt);
+});
+
 // --- Uebersicht ------------------------------------------------------------
 function katName(k) { return KATEGORIEN[k.toLowerCase()] || k || "ערוצים נוספים"; }
 function katRang(k) { const i = REIHENFOLGE.indexOf(k.toLowerCase()); return i < 0 ? REIHENFOLGE.length : i; }
@@ -494,9 +783,7 @@ function katRang(k) { const i = REIHENFOLGE.indexOf(k.toLowerCase()); return i <
 function reihenBilden() {
   const nachUrl = new Map(sender.map((c) => [c.key, c]));
   const reihen = [];
-  const zl = zuletzt.map((u) => nachUrl.get(u)).filter(Boolean);
   const fv = favoriten.map((u) => nachUrl.get(u)).filter(Boolean);
-  if (zl.length) reihen.push({ titel: "נצפו לאחרונה", sender: zl });
   if (fv.length) reihen.push({ titel: "מועדפים", sender: fv });
   const kats = [];
   for (const c of sender) if (!kats.includes(c.kat)) kats.push(c.kat);
@@ -590,7 +877,6 @@ function kopfZeigen(c) {
   teile.push(c.extern ? `<span>נפתח בנגן של הדפדפן</span>` : `<span class="punkt-live">שידור חי</span>`);
   $("kopfZeile").innerHTML = teile.join("<span aria-hidden='true'>·</span>");
   $("kopfSendung").innerHTML = sendungHtml(c, false);
-  $("kopfProgramm").disabled = !sendungen(c).some((p) => p[1] > jetztSek());
   $("kopfFavorit").textContent = favoriten.includes(c.key) ? "★ מועדף" : "☆ מועדף";
 }
 
@@ -660,7 +946,7 @@ function fokussiere(el, senkrecht) {
 // --- Player ----------------------------------------------------------------
 const video = $("video");
 let hls = null, zapListe = [], aktuell = null, reiheTitel = "", versuche = 0;
-let verbergen = null, zuletztTimer = null;
+let verbergen = null;
 
 function abspielen(c, reihe) {
   zapListe = reihe.sender.filter((x) => x.spielbar || x.key === c.key);
@@ -706,13 +992,6 @@ function starten(c) {
   } else {
     gescheitert("הדפדפן הזה אינו תומך בשידורים חיים (HLS).");
   }
-  clearTimeout(zuletztTimer);
-  // „Zuletzt gesehen“ erst, wenn man ein paar Sekunden dabei bleibt -
-  // beim schnellen Durchschalten fuellt sich die Reihe sonst mit allem
-  zuletztTimer = setTimeout(() => {
-    zuletzt = [c.key, ...zuletzt.filter((u) => u !== c.key)].slice(0, 12);
-    speicher.schreib("zi_zuletzt", zuletzt);
-  }, 4000);
 }
 
 function los() {
@@ -814,7 +1093,6 @@ function schliessen() {
   if (document.fullscreenElement) document.exitFullscreen().catch(() => {});
   if (hls) { hls.destroy(); hls = null; }
   video.pause(); video.removeAttribute("src"); video.load();
-  clearTimeout(zuletztTimer);
   $("spieler").classList.remove("offen", "verborgen");
   $("spieler").setAttribute("aria-hidden", "true");
   document.body.style.overflow = "";
@@ -896,6 +1174,12 @@ function hinweis(t) {
   clearTimeout(hinweisTimer); hinweisTimer = setTimeout(() => h.classList.remove("sichtbar"), 4200);
 }
 
+// Der feste Kopf ist unterschiedlich hoch - so viel Abstand halten Scrollen
+// und Fokus oben ein, damit nichts darunter verschwindet
+new ResizeObserver(() => {
+  document.documentElement.style.scrollPaddingTop = $("obenFix").offsetHeight + 12 + "px";
+}).observe($("obenFix"));
+
 // --- Start -----------------------------------------------------------------
 (async function () {
   const [{ liste }] = await Promise.all([laden(), epgLaden()]);
@@ -906,6 +1190,7 @@ function hinweis(t) {
   setInterval(() => {
     if (gewaehlt) { $("kopfSendung").innerHTML = sendungHtml(gewaehlt, false); }
     if (aktuell && $("spieler").classList.contains("offen")) $("osdSendung").innerHTML = sendungHtml(aktuell, true);
+    if (fuehrerOffen()) jetztLinieSetzen();
   }, 30000);
   setInterval(epgLaden, 30 * 60 * 1000);
 })();
