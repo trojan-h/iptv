@@ -303,7 +303,7 @@ img { display: block; }
 const GRUPPE = "Israel";
 const QUELLEN = [
   "playlist.m3u8",
-  "https://raw.githubusercontent.com/trojan-h/iptv-playlists/refs/heads/main/playlist.m3u8"
+  "https://raw.githubusercontent.com/trojan-h/iptv/refs/heads/main/playlist.m3u8"
 ];
 // Bessere (https-)Adressen fuer Sender, deren Listen-Adresse nur http kann
 const ERSATZ = {
@@ -403,7 +403,7 @@ function externOeffnen(c) {
 // (epg_israel.py); je tvg-id eine Liste [start, stop, titel, text].
 const EPG_QUELLEN = [
   "epg_israel.json",
-  "https://raw.githubusercontent.com/trojan-h/iptv-playlists/refs/heads/main/epg_israel.json"
+  "https://raw.githubusercontent.com/trojan-h/iptv/refs/heads/main/epg_israel.json"
 ];
 let epg = {}, epgStand = 0;
 async function epgLaden() {
