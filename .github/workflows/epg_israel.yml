@@ -12,7 +12,7 @@ jobs:
   epg:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4.2.2
       - name: Programm holen
         run: python3 epg_israel.py playlist.m3u8 epg_israel.json
       - name: Speichern
