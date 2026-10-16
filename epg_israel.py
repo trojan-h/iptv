@@ -6,7 +6,7 @@ klein genug fuer den Browser, und im selben Repo, also ohne CORS-Probleme.
 
 Zwei Quellen, je Sender kombiniert:
   1. open-epg.com - ausfuehrlichere Titel (mit Folge), reicht ~40 Stunden,
-     kennt als einzige HOT Zone, Yes Movies Action, Zoom und Viva Premium
+     kennt als einzige HOT Zone, HOT Drama, Yes Movies Action, Zoom und Viva
   2. epgshare01 IL1 - reicht ~58 Stunden; fuellt Luecken und die Zeit nach
      open-epg (Zuordnung per Titelvergleich geprueft, siehe IL1_ZUORDNUNG)
 
@@ -28,6 +28,12 @@ OPEN_EPG = "https://www.open-epg.com/files/israel.xml.gz"
 IL1 = "https://epgshare01.online/epgshare01/epg_ripper_IL1.xml.gz"
 VORHER = 3 * 3600        # laufende und gerade beendete Sendungen
 NACHHER = 72 * 3600      # so weit voraus, wie die Quellen reichen
+
+# tvg-id in playlist.m3u8 -> anders benannter Kanal in open-epg. HOT Drama
+# heisst dort „HOT HBO“ (gleiche Sendungen auf die Minute, geprueft 16.10.2026).
+OPEN_EPG_ZUORDNUNG = {
+    "HOTDrama.il": "hothbo.il",
+}
 
 # tvg-id in playlist.m3u8 -> Kanal in IL1. Nur Paare, bei denen zur selben
 # Zeit dieselben Sendungen laufen (geprueft 16.10.2026). Nicht dabei: Zoom
@@ -121,6 +127,9 @@ def main():
     # Abgleich nachsichtig wie in der App: klein, nur Buchstaben/Ziffern
     kennung = lambda s: re.sub(r"[^0-9a-z]", "", s.split("@")[0].lower())
     nach_kennung = {kennung(i): i for i in ids}
+    for sid, kanal in OPEN_EPG_ZUORDNUNG.items():
+        if sid in ids:
+            nach_kennung[kennung(kanal)] = sid
     il1_zu_id = {v: k for k, v in IL1_ZUORDNUNG.items() if k in ids}
 
     quellen, oe, il1 = [], {}, {}
