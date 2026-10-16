@@ -99,8 +99,6 @@ img { display: block; }
   box-shadow: 0 18px 40px rgba(0, 0, 0, .55), 0 0 0 1px rgba(255, 255, 255, .10);
 }
 .kachel:hover .name, .kachel:focus-visible .name, .kachel.fokus .name { color: var(--text); }
-.kachel.gesperrt .logo { opacity: .38; }
-.kachel.gesperrt .name { color: var(--text-blass); }
 /* Logos: feste Flaeche genau in der Mitte, das Bild passt sich ein. Mit
    max-height in Prozent rutschten hohe Logos (Hop!, HOT) nach unten. */
 .kachel .logo, .kopf .logo-gross, .einblendung .logo-klein { position: relative; }
@@ -319,9 +317,8 @@ const KATEGORIEN = {
 const RTL = document.documentElement.dir === "rtl";
 // Safari (Mac, iPhone, iPad - auch Chrome auf dem iPhone ist Safari innen)
 // spielt HLS selbst; ueberall sonst hls.js
-const NATIV = (navigator.vendor === "Apple Computer, Inc." &&
-  !!document.createElement("video").canPlayType("application/vnd.apple.mpegurl")) ||
-  new URLSearchParams(location.search).has("nativ");   // zum Testen
+const NATIV = navigator.vendor === "Apple Computer, Inc." &&
+  !!document.createElement("video").canPlayType("application/vnd.apple.mpegurl");
 const REIHENFOLGE = Object.keys(KATEGORIEN);
 // Rueckfallebene, falls die Liste nicht zu laden ist (Stand beim Erstellen)
 const EINGEBAUT = [{"name": "כאן", "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c8/Kan11Logo.svg/3840px-Kan11Logo.svg.png", "url": "https://kancdn.medonecdn.net/livehls/oil/kancdn-live/live/kan11/live.livx/playlist.m3u8", "kat": "General", "id": "channel11.il"}, {"name": "קשת", "logo": "https://upload.wikimedia.org/wikipedia/he/thumb/f/f0/Keshet12_2018.svg/3840px-Keshet12_2018.svg.png", "url": "http://stream.mcquack.net/294/index.m3u8", "kat": "General", "id": "channel12.il"}, {"name": "רשת", "logo": "https://i.imgur.com/eFM3bTq.png", "url": "https://dsk76kvc9kie6.cloudfront.net/media/87f59c77-03f6-4bad-a648-897e095e7360/profile/5/profileManifest.m3u8", "kat": "General", "id": "channel13.il"}, {"name": "HOT Zone", "logo": "https://raw.githubusercontent.com/tv-logo/tv-logos/main/countries/israel/hot-zone-il.png", "url": "http://stream.mcquack.net/379/index.m3u8", "kat": "Movies", "id": "hotzone.il"}, {"name": "HOT Drama", "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/HotNewLogo.svg/250px-HotNewLogo.svg.png", "url": "http://stream.mcquack.net/381/index.m3u8", "kat": "Movies", "id": "HOTDrama.il"}, {"name": "כאן חינוכית", "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/KanHinuchit.svg/960px-KanHinuchit.svg.png", "url": "https://kancdn.medonecdn.net/livehls/oil/kancdn-live/live/kan_edu/live.livx/playlist.m3u8", "kat": "Kids", "id": "kaneducation.il"}, {"name": "החיים הטובים", "logo": "https://raw.githubusercontent.com/tv-logo/tv-logos/main/countries/israel/good-life-channel-il.png", "url": "http://stream.mcquack.net/47/index.m3u8", "kat": "Lifestyle", "id": "goodlifeplus.il"}, {"name": "Hop!", "logo": "https://raw.githubusercontent.com/tv-logo/tv-logos/main/countries/israel/hop-il.png", "url": "http://stream.mcquack.net/44/index.m3u8", "kat": "Kids", "id": "Hop.il@SD"}, {"name": "Yes Movies Action", "logo": "https://raw.githubusercontent.com/tv-logo/tv-logos/main/countries/israel/yes-movies-action-il.png", "url": "http://stream.mcquack.net/380/index.m3u8", "kat": "Movies", "id": "yesmoviesaction.il"}, {"name": "ערוץ 14", "logo": "https://raw.githubusercontent.com/tv-logo/tv-logos/main/countries/israel/channel14-il.png", "url": "https://ch14.medonecdn.net/livehls/oil/ch14/live/ch14/live.livx/playlist.m3u8", "kat": "General", "id": "channel14.il"}, {"name": "i24NEWS", "logo": "https://raw.githubusercontent.com/tv-logo/tv-logos/main/countries/israel/i24-news-il.png", "url": "https://i24newshebrew-cdn.encoders.immergo.tv/2/streamPlaylist.m3u8", "kat": "News", "id": "i24hebrew.il"}, {"name": "כנסת 99", "logo": "https://raw.githubusercontent.com/tv-logo/tv-logos/main/countries/israel/knesset-channel-il.png", "url": "http://stream.mcquack.net/48/index.m3u8", "kat": "News", "id": "knesset.il"}, {"name": "ויוה פרימיום", "logo": "https://raw.githubusercontent.com/tv-logo/tv-logos/main/countries/israel/viva-premium-il.png", "url": "http://stream.mcquack.net/43/index.m3u8", "kat": "Movies", "id": "vivapremium.il"}, {"name": "ערוץ 24", "logo": "https://raw.githubusercontent.com/tv-logo/tv-logos/main/countries/israel/channel-24-il.png", "url": "http://stream.mcquack.net/42/index.m3u8", "kat": "Music", "id": "tve.il"}, {"name": "ערוץ 16", "logo": "https://ch16israel.vod.immergo.tv/ch16israel/uploaded/bfbd4781-67a7-437e-8f7e-898a5cbc4ab4.png", "url": "https://ch16israel-cdn.encoders.immergo.tv/2/streamPlaylist.m3u8", "kat": "General", "id": ""}, {"name": "ערוץ הכלכלה", "logo": "https://images.frp1.ott.kaltura.com/Service.svc/GetImage/p/3197/entry_id/fcae54b630b544d882529d959580077b/version/0", "url": "https://n-121-7.il.cdn-redge.media/livehls/oil/calcala-live/live/channel10/live.livx/playlist.m3u8", "kat": "News", "id": "finance.il"}, {"name": "הערוץ הים תיכוני", "logo": "https://raw.githubusercontent.com/tv-logo/tv-logos/main/countries/israel/mediterranean-channel-il.png", "url": "http://stream.mcquack.net/46/index.m3u8", "kat": "Music", "id": "yamtichoni.il"}, {"name": "זום", "logo": "https://raw.githubusercontent.com/tv-logo/tv-logos/main/countries/israel/zoom-il.png", "url": "http://stream.mcquack.net/377/index.m3u8", "kat": "Kids", "id": "zoom.il"}, {"name": "ערוץ 9", "logo": "https://raw.githubusercontent.com/tv-logo/tv-logos/main/countries/israel/channel9-il.png", "url": "http://stream.mcquack.net/20/index.m3u8", "kat": "General", "id": "channel9.il"}];
@@ -381,14 +378,15 @@ async function laden() {
 
 // `key` bleibt die Adresse aus der Liste - daran haengen Favoriten und
 // „Zuletzt gesehen“, auch wenn sich die Ersatz-Adresse aendert
-// Unverschluesselte Sender (http) blockiert der Browser in dieser https-
-// Seite. Safari spielt sie aber in seinem eigenen Player, wenn man die
-// Adresse direkt oeffnet - dann gehen sie in einem neuen Tab auf (`extern`).
+// Unverschluesselte Sender (http) blockiert jeder Browser in dieser https-
+// Seite. Direkt geoeffnet spielt sie aber der Player des Browsers (Safari
+// selbst, Chrome ueber eine HLS-Erweiterung) - also in einem neuen Tab, in
+// jedem Browser gleich (`extern`).
 function vorbereiten(liste) {
   return liste.map((c) => {
     const url = ERSATZ[c.url] || c.url;
     const http = SICHER && url.startsWith("http:");
-    return { ...c, key: c.url, url, spielbar: !http, extern: http && NATIV };
+    return { ...c, key: c.url, url, spielbar: !http, extern: http };
   });
 }
 
@@ -525,11 +523,11 @@ function zeichnen() {
       <h2>${esc(r.titel)}</h2>
       <div class="band" role="list">
         ${r.sender.map((c, ci) => `
-          <button class="kachel${c.spielbar || c.extern ? "" : " gesperrt"}" role="listitem" data-reihe="${ri}" data-index="${ci}"
+          <button class="kachel" role="listitem" data-reihe="${ri}" data-index="${ci}"
                   aria-label="${esc(c.name)}">
             <div class="logo" data-logo="${esc(c.logo)}">${logoBild(c)}</div>
             ${favoriten.includes(c.key) ? `<span class="stern" aria-hidden="true">★</span>` : ""}
-            ${c.spielbar ? "" : `<span class="marker">${c.extern ? "↗ נגן הדפדפן" : "רק ב־Zapper"}</span>`}
+            ${c.extern ? `<span class="marker">↗ נגן הדפדפן</span>` : ""}
             <span class="name" dir="auto">${esc(c.name)}</span>
           </button>`).join("")}
       </div>
@@ -589,12 +587,10 @@ function kopfZeigen(c) {
   $("kopfName").textContent = c.name;
   const teile = [];
   if (c.kat) teile.push(`<span>${esc(katName(c.kat))}</span>`);
-  teile.push(c.spielbar ? `<span class="punkt-live">שידור חי</span>` :
-    c.extern ? `<span>נפתח בנגן של הדפדפן</span>` : `<span>רק ב־Safari או באפליקציית Zapper</span>`);
+  teile.push(c.extern ? `<span>נפתח בנגן של הדפדפן</span>` : `<span class="punkt-live">שידור חי</span>`);
   $("kopfZeile").innerHTML = teile.join("<span aria-hidden='true'>·</span>");
   $("kopfSendung").innerHTML = sendungHtml(c, false);
   $("kopfProgramm").disabled = !sendungen(c).some((p) => p[1] > jetztSek());
-  $("kopfAnsehen").disabled = !c.spielbar && !c.extern;
   $("kopfFavorit").textContent = favoriten.includes(c.key) ? "★ מועדף" : "☆ מועדף";
 }
 
@@ -607,7 +603,6 @@ $("reihen").addEventListener("click", (e) => {
   const k = e.target.closest(".kachel"); if (!k) return;
   const { reihe, c } = kachelAus(k);
   if (c.extern) { kopfZeigen(c); externOeffnen(c); return; }
-  if (!c.spielbar) { hinweis(gesperrtText(c)); kopfZeigen(c); return; }
   abspielen(c, reihe);
 });
 $("reihen").addEventListener("focusin", (e) => {
@@ -633,10 +628,6 @@ function favoritUmschalten(c) {
   zeichnen(); kopfZeigen(c);
   hinweis(favoriten.includes(c.key) ? `${c.name} נוסף למועדפים` : `${c.name} הוסר מהמועדפים`);
   if (fokus) { const el = [...document.querySelectorAll(".kachel")].find((k) => k.getAttribute("aria-label") === fokus); if (el) el.focus({ preventScroll: true }); }
-}
-
-function gesperrtText(c) {
-  return `${c.name} משודר רק בחיבור לא מוצפן (http), והדפדפן הזה חוסם אותו. ב־Safari (אייפון, אייפד, מק) הוא נפתח בנגן של הדפדפן, ובאפליקציית Zapper ב־Apple TV הוא עובד.`;
 }
 
 // Pfeiltasten in der Uebersicht: wie auf dem Apple TV von Kachel zu Kachel
